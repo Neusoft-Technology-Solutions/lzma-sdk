@@ -71,7 +71,7 @@ void BraState_Free(void *pp, ISzAlloc *alloc)
 SRes BraState_SetProps(void *pp, const Byte *props, size_t propSize, ISzAlloc *alloc)
 {
   CBraState *p = ((CBraState *)pp);
-  alloc = alloc;
+  (void)alloc;
   p->encodeMode = 0;
   p->ip = 0;
   if (p->methodId == XZ_ID_Delta)
@@ -129,7 +129,7 @@ static SRes BraState_Code(void *pp, Byte *dest, SizeT *destLen, const Byte *src,
   SizeT srcLenOrig = *srcLen;
   *destLen = 0;
   *srcLen = 0;
-  finishMode = finishMode;
+  (void)finishMode;
   *wasFinished = 0;
   while (destLenOrig > 0)
   {
@@ -296,7 +296,7 @@ static SRes Lzma2State_Code(void *pp, Byte *dest, SizeT *destLen, const Byte *sr
   ELzmaStatus status;
   /* ELzmaFinishMode fm = (finishMode == LZMA_FINISH_ANY) ? LZMA_FINISH_ANY : LZMA_FINISH_END; */
   SRes res = Lzma2Dec_DecodeToBuf((CLzma2Dec *)pp, dest, destLen, src, srcLen, finishMode, &status);
-  srcWasFinished = srcWasFinished;
+  (void)srcWasFinished;
   *wasFinished = (status == LZMA_STATUS_FINISHED_WITH_MARK);
   return res;
 }
@@ -634,7 +634,7 @@ SRes XzUnpacker_Code(CXzUnpacker *p, Byte *dest, SizeT *destLen,
       (*destLen) += destLen2;
       dest += destLen2;
       p->unpackSize += destLen2;
-      
+
       RINOK(res);
       
       if (*status == CODER_STATUS_FINISHED_WITH_MARK)
