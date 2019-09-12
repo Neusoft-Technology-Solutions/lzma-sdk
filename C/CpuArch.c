@@ -73,9 +73,27 @@ static void MyCPUID(UInt32 function, UInt32 *a, UInt32 *b, UInt32 *c, UInt32 *d)
   #else
 
   __asm__ __volatile__ (
+    /*
+     * When compiling with -fPIC (position-independent code) on x86-32 platforms on GCC, CpuArch.c
+     * fails to compile because it attempts to use the ebx register which is reserved for the global
+     * offset table. The provided code saves the ebx register to edi before calling cpuid, then swaps
+     * the result of cpuid and the stored value in edi, and returns the value from %edi to (*b).
+     * On amd64, -fPIC does not use the ebx register, so the simpler (faster) version works there. The
+     * juggling with %edi only needs to be done on x86-32 with -fPIC, and not in any other case.
+     *
+     * workaround taken from http://sourceforge.net/p/sevenzip/bugs/1271
+     */
+    #if defined(MY_CPU_X86) && defined(__PIC__)
+    "mov %%ebx, %%edi;"
+    "cpuid;"
+    "xchgl %%ebx, %%edi;"
+    : "=a" (*a) ,
+      "=D" (*b) ,
+    #else
     "cpuid"
     : "=a" (*a) ,
       "=b" (*b) ,
+    #endif
       "=c" (*c) ,
       "=d" (*d)
     : "0" (function)) ;
