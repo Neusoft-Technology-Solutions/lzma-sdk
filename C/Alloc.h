@@ -1,3 +1,5 @@
+#if 0
+
 /* Alloc.h -- Memory allocation functions
 2009-02-07 : Igor Pavlov : Public domain */
 
@@ -36,3 +38,6 @@ void BigFree(void *address);
 #endif
 
 #endif
+
+#endif // #if 0
+
